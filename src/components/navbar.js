@@ -1,6 +1,6 @@
 import React from "react";
 import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBNavLink } from 'mdbreact';
-import lemon from '../assets/images/lemon.svg'
+import lemon from '../assets/images/navbarImg.svg'
 
 
 class Navbar extends React.Component{
@@ -25,7 +25,7 @@ class Navbar extends React.Component{
         return(
                 <MDBNavbar color="unique-color-dark" fixed="top" dark expand="md">
                 <MDBNavbarBrand href="/">
-                    <img src= {lemon} alt = 'Lemon Picture' className='w-25'></img>
+                    <img src= {lemon} alt = 'Lemon Picture' className='w-25' style = {{height: 45}}></img>
                     <strong>Lemonade Stand</strong>
                 </MDBNavbarBrand>
                 {!this.state.isWideEnough && <MDBNavbarToggler onClick={this.onClick} />}

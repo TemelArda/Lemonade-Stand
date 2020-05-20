@@ -1,11 +1,10 @@
 import React from "react";
 import Navbar from "../../components/navbar";
-import { MDBBtn, MDBCol, MDBRow } from "mdbreact";
-import { connect } from 'react-redux';
-import { fetchData } from '../../actions/formActions';
-import PropTypes from 'prop-types'
+import { MDBBtn, MDBCol, MDBRow, MDBIcon, MDBAnimation } from "mdbreact";
+import { connect } from "react-redux";
+import { fetchData } from "../../actions/formActions";
+import PropTypes from "prop-types";
 import DatePicker from "react-date-picker";
-
 
 const items = [
   { name: "Fresh Lemon Lemonade", cost: 1.5 },
@@ -30,7 +29,8 @@ class Form extends React.Component {
       Wild: { value: 0 },
       salesman: "none",
       Total: 0,
-      date:new Date('Jan 1 2020'),
+      date: new Date("Jan 1 2020"),
+      sending: false,
     };
     this.handleClick = this.handleClick.bind(this);
     this.handleDate = this.handleDate.bind(this);
@@ -42,10 +42,15 @@ class Form extends React.Component {
     let total = 0;
     let i = 0;
     for (let d in this.state) {
-      if (d !== "salesman" && d !== "Total" && d !== 'date') {
-        if(!isNaN(this.state[d].value)){
+      if (
+        d !== "salesman" &&
+        d !== "Total" &&
+        d !== "date" &&
+        d !== "sending"
+      ) {
+        if (!isNaN(this.state[d].value)) {
           total += items[i].cost * this.state[d].value;
-        }else{
+        } else {
           total = -1;
           break;
         }
@@ -65,52 +70,52 @@ class Form extends React.Component {
     return comm.toFixed(2);
   };
 
-  handleDate = (e)=>{
-    this.setState({date:e})
-  }
+  handleDate = (e) => {
+    this.setState({ date: e });
+  };
   handleChange = (e) => {
     let name = e.target.name;
     let value;
     if (name !== "salesman") {
       let nums = e.target.value;
-      if (!isNaN(Number(nums))) {        
+      if (!isNaN(Number(nums))) {
         nums = Number(nums);
-      } 
-      let value = { value: nums};
-      let t = this.calcTotal()
-      this.setState({ [name]: value}, ()=>{
-        let t = this.calcTotal()
-        
-        if(t == -1){
-          t = 'NaN'
+      }
+      let value = { value: nums };
+      // let t = this.calcTotal()
+      this.setState({ [name]: value }, () => {
+        let t = this.calcTotal();
+
+        if (t == -1) {
+          t = "NaN";
         }
-        this.setState({Total: t});
+        this.setState({ Total: t });
       });
     } else {
-      
       this.setState({ [name]: e.target.value });
-      
     }
-    
   };
 
-  handleClick() {    
-    if (this.state.Total === 'NaN') {
+  handleClick() {
+    if (this.state.Total === "NaN") {
       alert("invalid input");
     } else {
       let comm = this.calcComm(this.state.Total);
       console.log(comm.typeOf);
       comm = Number(comm);
+      this.setState({ sending: true });
       let data = {
-        total:this.state.Total,
+        total: this.state.Total,
         commision: comm,
         salesman: this.state.salesman,
-        items:[{ name: "Fresh Lemon Lemonade", amount: this.state.Fresh.value },
-        { name: "Orange & Lemon Splash", amount:this.state.Orange.value },
-        { name: "Sugary Shocker", amount: this.state.Sugary.value},
-        { name: "Wild Whiskey Whack", amount: this.state.Wild.value },],
-        date: this.state.date
-      }
+        items: [
+          { name: "Fresh Lemon Lemonade", amount: this.state.Fresh.value },
+          { name: "Orange & Lemon Splash", amount: this.state.Orange.value },
+          { name: "Sugary Shocker", amount: this.state.Sugary.value },
+          { name: "Wild Whiskey Whack", amount: this.state.Wild.value },
+        ],
+        date: this.state.date,
+      };
       this.props.fetchData(data);
 
       console.log(Date());
@@ -120,10 +125,13 @@ class Form extends React.Component {
         Orange: { value: 0 },
         Sugary: { value: 0 },
         Wild: { value: 0 },
-        Total:0,
+        Total: 0,
         salesman: "none",
-        date:new Date('Jan 1 2020')
+        date: new Date("Jan 1 2020"),
       });
+      setTimeout(() => {
+        this.setState({ sending: false });
+      }, 5000);
     }
   }
 
@@ -132,10 +140,27 @@ class Form extends React.Component {
       <React.Fragment>
         <Navbar />
         <div className="Form h-100 d-flex justify-content-center align-items-center">
-          <MDBCol lg="6" md="9" className="form-group mt-5 mx-3">
+          <MDBCol
+            lg="6"
+            md="9"
+            className="form-group mx-3"
+            style={{ marginTop: "115px" }}
+          >
             <MDBRow>
               <h2 className="white-text mx-auto">Sales Data Form</h2>
             </MDBRow>
+            {this.state.sending ? (
+              <MDBAnimation type="fadeIn" duration="1s">
+                <div className="confirmation text-center">
+                  <h2 className="light-green-text">
+                    Form has been submitted <MDBIcon far icon="check-circle" />
+                  </h2>
+                </div>
+              </MDBAnimation>
+            ) : (
+              <div></div>
+            )}
+
             <hr className="white" />
             <h4 className="white-text text-center">
               {" "}
@@ -145,13 +170,15 @@ class Form extends React.Component {
               return (
                 <MDBRow className="my-4" key={index}>
                   <MDBCol>
-                    <h6 className="white-text">{item.name}:<br/>${item.cost.toFixed(2)}/cup</h6>
+                    <h6 className="white-text">
+                      {item.name}:<br />${item.cost.toFixed(2)}/cup
+                    </h6>
                   </MDBCol>
                   <MDBCol md="3" sm="5">
                     <input
                       name={item.name.split(" ")[0]}
                       type="text"
-                      value={ this.state[item.name.split(" ")[0]].value}
+                      value={this.state[item.name.split(" ")[0]].value}
                       className={
                         isNaN(this.state[item.name.split(" ")[0]].value)
                           ? "form-control is-invalid"
@@ -168,9 +195,13 @@ class Form extends React.Component {
                 </MDBRow>
               );
             })}
-            <MDBRow >
-              <MDBCol className="d-flex justify-content-end" md ='10'><h4 className="text-white">Total:</h4></MDBCol>
-              <MDBCol className="d-flex justify-content-start" m='2'><h4 className="text-white">{this.state.Total}</h4></MDBCol>
+            <MDBRow>
+              <MDBCol className="d-flex justify-content-end" md="10">
+                <h4 className="text-white">Total:</h4>
+              </MDBCol>
+              <MDBCol className="d-flex justify-content-start" m="2">
+                <h4 className="text-white">{this.state.Total}</h4>
+              </MDBCol>
             </MDBRow>
             <hr className="white mt-3" />
             <MDBRow className="mt-3">
@@ -197,16 +228,16 @@ class Form extends React.Component {
                   })}
                 </select>
               </MDBCol>
-              <MDBCol md='6' className='mt-2'>
+              <MDBCol md="6" className="mt-2">
                 <DatePicker
-                    className="mr-5"
-                    onChange={this.handleDate}
-                    name="from"
-                    value={this.state.date}
-                  />
+                  className="mr-5"
+                  onChange={this.handleDate}
+                  name="from"
+                  value={this.state.date}
+                />
               </MDBCol>
             </MDBRow>
-            
+
             <MDBRow className="mt-5 mx-3 d-flex justify-content-end">
               <MDBBtn className="form-btn" onClick={this.handleClick}>
                 Submit Form
@@ -219,8 +250,8 @@ class Form extends React.Component {
   }
 }
 
-Form.propTypes={
-  fetchData: PropTypes.func.isRequired
-}
+Form.propTypes = {
+  fetchData: PropTypes.func.isRequired,
+};
 
-export default connect(null, {fetchData}) (Form);
+export default connect(null, { fetchData })(Form);
