@@ -87,7 +87,7 @@ class Form extends React.Component {
         let t = this.calcTotal();
 
         if (t == -1) {
-          t = "NaN";
+          t = 0;
         }
         this.setState({ Total: t });
       });
@@ -200,7 +200,7 @@ class Form extends React.Component {
                 <h4 className="text-white">Total:</h4>
               </MDBCol>
               <MDBCol className="d-flex justify-content-start" m="2">
-                <h4 className="text-white">{this.state.Total}</h4>
+                <h4 className="text-white">${this.state.Total.toFixed(2)}</h4>
               </MDBCol>
             </MDBRow>
             <hr className="white mt-3" />

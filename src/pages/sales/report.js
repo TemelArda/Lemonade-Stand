@@ -184,16 +184,16 @@ class Table extends React.Component {
             <td>{item.items.map(i =>{
               return(<p>{i.name}: {i.amount}</p>)
             })}</td>
-            <td>{item.total}</td>
-            <td>{item.commision}</td>
+            <td>${item.total.toFixed(2)}</td>
+            <td>${item.commision.toFixed(2)}</td>
             </tr> 
             );
           })}
             <tr>
               <td>TOTALS</td>
               <td></td>
-              <td>{this.props.total}</td>
-              <td>{this.props.comm}</td>
+              <td>${this.props.total.toFixed(2)}</td>
+              <td>${this.props.comm.toFixed(2)}</td>
             </tr>
           </MDBTableBody>
         </MDBTable>
