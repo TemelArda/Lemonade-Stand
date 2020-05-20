@@ -97,8 +97,8 @@ class Form extends React.Component {
   };
 
   handleClick() {
-    if (this.state.Total === "NaN") {
-      alert("invalid input");
+    if (this.state.Total === "NaN" || this.state.salesman == 'none') {
+      alert("Oops Invalid input. Must pick a salesman and have a number in each field");
     } else {
       let comm = this.calcComm(this.state.Total);
       console.log(comm.typeOf);
